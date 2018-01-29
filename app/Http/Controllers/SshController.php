@@ -2,7 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Entities\Device;
+use Golden\Foundation\Application;
+use Golden\Http\Request;
 use Golden\Http\Response;
+use Golden\Session\Session;
+use Net_SSH2;
 
 
 /**
@@ -14,6 +19,15 @@ class SshController extends Controller
 {
 
 	/**
+	 * SshController constructor.
+	 */
+	public function __construct()
+	{
+		set_include_path(Application::getInstance()->getBasePath() . '/vendor/phpseclib');
+		include_once 'Net/SSH2.php';
+	}
+
+	/**
 	 * Display a listing of the resource.
 	 *
 	 * @return Response
@@ -21,7 +35,11 @@ class SshController extends Controller
 	 */
 	public function index()
 	{
-		return view('pages.ssh.index');
+//		if(Session::has('ssh'))
+//			return view('pages.ssh.commands');
+
+		$devices = Device::where(['active' => 1])->get();
+		return view('pages.ssh.index', compact('devices'));
 	}
 
 	/**
@@ -91,4 +109,49 @@ class SshController extends Controller
 	{
 		//
 	}
+
+	/**
+	 * Connect to the shell terminal
+	 *
+	 * @return Response
+	 */
+	public function shell()
+	{
+		try
+		{
+			$request = collect(Request::all())->except(['uri']);
+
+			// -- check if all fields filled
+			if($request->filter()->count() < 3)
+				throw new \Exception('Erro: Por favor, preencha todos os campos!', 1);
+
+			if( $device = Device::find( $request->get('device_id')) )
+			{
+				$ssh = new Net_SSH2($device->ip_address);
+
+				if (!$ssh->login($request->get('username'), $request->get('password')))
+					throw new \Exception('Erro: Usuário ou senha inválidos', 1);
+
+				if($request->has('command') && strlen(trim($request->get('command'))))
+				{
+					$output = $ssh->exec( $request->get('command') );
+
+					return [
+						'status' => 'Comando executado com sucesso',
+						'output' => $output,
+					];
+				}
+
+				return [
+					'status' => 'Conectado com sucesso',
+					'output' => 'Conectado. Aguardando comando...',
+				];
+			}
+		}
+		catch (\Exception $ex)
+		{
+			return Response::create(['error' => $ex->getMessage(), 500])->setAjax()->send();
+		}
+	}
+
 }

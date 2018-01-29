@@ -218,6 +218,7 @@ class Router
 	private function addResource($uri, $controller, $name)
 	{
 		$this->resources[$uri] = [
+			'pattern' => $uri,
 			'uri' => $uri,
 			'controller' => $controller,
 			'name' => $name,
@@ -329,12 +330,13 @@ class Router
 		$return = null;
 		$uri = Request::has( self::$prefix ) ? Request::get( self::$prefix ) : '/';
 
+
 		foreach ( $this->getRoutes() as $base_uri => $routes )
 		{
 			foreach ($routes as $route)
 			{
 				// -- get pattern
-				$pattern_as_regex = $this->getRegex( $route['pattern'] );
+				$pattern_as_regex = $this->getRegex( isset($route['pattern']) ? $route['pattern'] : '' );
 
 				if(preg_match($pattern_as_regex, $uri, $matches) && Request::getMethod() == $route['method'])
 				{
@@ -437,9 +439,7 @@ class Router
 	 */
 	private static function getRouteParams($method, $uri, $controller, $name )
 	{
-		$route = Application::getRouter()
-		                    ->addResource($uri, $controller, $name)
-		                    ->getResources();
+		$route = Application::getRouter()->getRoutes();
 
 		switch ($method)
 		{
@@ -464,9 +464,12 @@ class Router
 				break;
 		}
 
-		$route[$uri]['pattern'] = $route[$uri]['uri'];
+		$route[$uri]['uri'] = $uri;
+		$route[$uri]['pattern'] = $uri;
+		$route[$uri]['controller'] = $controller;
+		$route[$uri]['name'] = $name;
 
-		Application::getRouter()->addRoute([ $route ]);
+		Application::getRouter()->addRoute([ $uri => [ $route[$uri] ] ]);
 
 		return Application::getRouter();
 	}

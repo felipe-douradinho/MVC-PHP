@@ -5,13 +5,14 @@ use Golden\Routing\Router;
 
 
 // -- Devices
-Router::resource('/', 'DeviceController@index', 'device@index');
+Router::get('/', 'DeviceController@index', 'device@index');
 
 // -- Devices
 Router::resource('/devices', 'DeviceController', 'devices');
 
 // -- SSH Integration
 Router::resource('/ssh-integration', 'SshController', 'ssh_integration');
+Router::post('/ssh_integration/shell', 'SshController@shell', 'ssh_integration.shell');
 
 // -- Cryptography
 Router::resource('/cryptography', 'CryptographyController', 'cryptography');

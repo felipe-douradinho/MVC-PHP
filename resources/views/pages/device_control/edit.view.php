@@ -15,7 +15,7 @@
 
             <div class="row">
                 <div class="col-md-6">
-                    <label for="hostname">Nome*</label>
+                    <label for="hostname">Hostname*</label>
                     <input type="text" name="hostname" id="hostname" value="<?php echo $device->hostname; ?>"
                            class="form-control" />
                 </div>

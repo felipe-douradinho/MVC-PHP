@@ -140,18 +140,19 @@ class DeviceController extends Controller
 
 		if($request->keys()->diff( $fillable )->count())
 		{
-			$errors = [ 'Os campos enviados são inválidos' ];
+			Session::set(['errors' => [ 'Os campos enviados são inválidos' ]]);
 
 			$device = Device::find($id);
-			return view('pages.device_control.create', compact('errors', 'device'));
+			return view('pages.device_control.create', compact('device'));
 		}
 
 		// -- check if all fields filled
 		if($request->filter()->count() < 5)
 		{
-			$errors = [ 'Por favor, preencha todos os campos!' ];
+			Session::set(['errors' => [ 'Por favor, preencha todos os campos!' ]]);
+
 			$device = Device::find($id);
-			return view('pages.device_control.edit', compact('errors', 'device'));
+			return view('pages.device_control.edit', compact('device'));
 		}
 
 		try
@@ -176,10 +177,10 @@ class DeviceController extends Controller
 			MySql::rollBack();
 			Session::set($request->toArray());
 
-			$errors = [ 'Desculpe, ocorreu um erro deconhecido!' ];
+			Session::set(['errors' => [ 'Desculpe, ocorreu um erro deconhecido!' ]]);
 
 			$device = Device::find($id);
-			return view('pages.device_control.edit', compact('errors', 'device'));
+			return view('pages.device_control.edit', compact('device'));
 		}
 	}
 

@@ -1132,6 +1132,7 @@ if (! function_exists('view')) {
 	 */
 	function view($view_path, array $variables = [ ])
 	{
+		$variables = Session::has('errors') ? $variables + Session::pull('errors', true) : $variables;
 		return ViewEngine::make($view_path, $variables);
 	}
 }

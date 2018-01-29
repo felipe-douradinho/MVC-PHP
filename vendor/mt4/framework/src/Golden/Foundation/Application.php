@@ -328,7 +328,8 @@ class Application
 	{
 		return function () {
 			call_user_func( Router::onLoad() );
-			Session::flush()->start();
+			Session::start( $this->getBasePath() );
+			Session::flushErrors();
 		};
 	}
 

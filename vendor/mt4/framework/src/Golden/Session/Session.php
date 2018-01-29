@@ -2,6 +2,8 @@
 
 namespace Golden\Session;
 
+use Golden\Foundation\Application;
+
 /**
  * Class Session
  * @package Golden\Session
@@ -11,11 +13,18 @@ class Session
 
 	/**
 	 * Lets begin
+	 *
+	 * @param $app_base_path
 	 */
-	public static function start()
+	public static function start($app_base_path = null)
 	{
+		if(!is_null($app_base_path))
+		{
+			set_include_path($app_base_path . '/vendor/phpseclib');
+			include_once 'Net/SSH2.php';
+		}
+
 		@session_start();
-		$_SESSION['data'] = [ ];
 	}
 
 	/**
@@ -29,13 +38,56 @@ class Session
 	/**
 	 * @param string $key
 	 *
-	 * @return string
+	 * @param bool $preserve_key
+	 *
+	 * @return string|array
 	 */
-	public static function pull($key)
+	public static function get($key, $preserve_key = false)
 	{
 		if(self::has($key))
 		{
-			$value = $_SESSION['data'][$key];
+			if($preserve_key)
+				$value[$key] = $_SESSION['data'][$key];
+			else
+				$value = $_SESSION['data'][$key];
+
+			return $value;
+		}
+
+		return '';
+	}
+
+	/**
+	 * @param string $key
+	 */
+	public static function destroy($key)
+	{
+		if(!isset($_SESSION))
+			self::start();
+
+		if(self::has($key))
+			unset($_SESSION['data'][$key]);
+	}
+
+	/**
+	 * @param string $key
+	 *
+	 * @param bool $preserve_key
+	 *
+	 * @return string|array
+	 */
+	public static function pull($key, $preserve_key = false)
+	{
+		if(!isset($_SESSION))
+			self::start();
+
+		if(self::has($key))
+		{
+			if($preserve_key)
+				$value[$key] = $_SESSION['data'][$key];
+			else
+				$value = $_SESSION['data'][$key];
+
 			unset($_SESSION['data'][$key]);
 
 			return $value;
@@ -51,7 +103,18 @@ class Session
 	 */
 	public static function has($key)
 	{
-		return array_key_exists('data', $_SESSION) && array_key_exists($key, $_SESSION['data']);
+		return isset($_SESSION) && array_key_exists('data', $_SESSION) && array_key_exists($key, $_SESSION['data']);
+	}
+
+	/**
+	 * Flush
+	 *
+	 * @return Session
+	 */
+	public static function flushErrors()
+	{
+		self::pull('errors');
+		return (new static());
 	}
 
 	/**

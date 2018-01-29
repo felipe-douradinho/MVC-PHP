@@ -269,6 +269,9 @@ class Response
 	 */
 	public function setContent( $content )
 	{
+		if(is_array( $content ))
+			$this->setAjax();
+
 		$this->content = (string) ( is_array( $content ) ? json_encode($content) : $content );
 		return $this;
 	}
