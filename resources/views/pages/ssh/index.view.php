@@ -3,7 +3,7 @@
 
 <h4><small>TESTE MT4</small></h4>
 <hr>
-<h2>Integração SSH - Conectar</h2>
+<h2>Integração SSH </h2>
 <h5>Framework próprio por Felipe D. v<?php echo \Golden\Foundation\Application::VERSION; ?></h5>
 
 <p>&nbsp;</p>
@@ -97,6 +97,9 @@
     </div>
 
 </form>
+
+<p>&nbsp;</p>
+<span id="status"></span>
 
 
 <script src="<?php echo asset('assets/app/ssh_integration.js'); ?>"></script>

@@ -1,19 +1,14 @@
 var App = App || {};
 
-App.ssh_integration = (function () {
+App.cryptography = (function () {
     "use strict";
 
     // -- local properties
-    var bt_connect_txt = '.bt-connect',
-
-        form_connect_txt = '#form-connect',
-
-        div_ssh_connect_txt = '#div-ssh-connect',
-        div_ssh_command_txt = '#div-ssh-command',
-
+    var bt_action = '#bt-action',
+        form_txt = '#form',
         status_txt = '#status',
-        select_device = '#device_id',
-
+        text_txt = '#text',
+        input_action = 'input[name="action"]',
         output_txt = '#output';
 
 
@@ -22,35 +17,37 @@ App.ssh_integration = (function () {
      */
     function setup()
     {
-        // -- connect to ssh
-        bindConnect();
+        // -- bind cryptography
+        bindCryptography();
     }
 
     /**
-     * Connect to ssh
+     * Bind cryptography
      */
-    function bindConnect()
+    function bindCryptography()
     {
-        $(bt_connect_txt).on('click', function(ev)
+        $(bt_action).on('click', function(ev)
         {
             $.ajax({
                 method: "POST",
-                url: $(form_connect_txt).attr('action'),
-                data: $(form_connect_txt).serialize(),
+                url: $(form_txt).attr('action'),
+                data: $(form_txt).serialize(),
                 beforeSend: function () {
-                    showCommand('Enviando comando...');
+                    showOutput('Aguarde...');
                 },
                 error: function (request, error)
                 {
                     var msg = request.responseJSON == undefined ? request.responseText : request.responseJSON.output;
-                    setStatus( $('<span style="color: red;">'+msg+'</span>') );
+                    showOutput( msg);
                 },
                 success: function (response)
                 {
-                    setStatus( '=> ' + $(select_device + ' option:selected').text() );
-                    closeDivConnect();
-                    openDivCommand();
-                    showCommand(response.output);
+                    showOutput("Original: "+$(text_txt).val()+" \n\n-- Resultado\n "+response.details+"");
+
+                    $(text_txt).val(response.final);
+
+                    $(bt_action).html( $(input_action).val() == 'encrypt' ? 'Desencriptar' : 'Criptografar' );
+                    $(input_action).val( $(input_action).val() == 'encrypt' ? 'decrypt' : 'encrypt' );
                 }
             });
         });
@@ -98,7 +95,7 @@ App.ssh_integration = (function () {
     /**
      * Close
      */
-    function showCommand(text)
+    function showOutput(text)
     {
         $(output_txt).hide();
         $(output_txt).text();
@@ -121,5 +118,5 @@ App.ssh_integration = (function () {
 }());
 
 $(document).ready(function(){
-    App.ssh_integration.init(); // is initialized by other places
+    App.cryptography.init(); // is initialized by other places
 });

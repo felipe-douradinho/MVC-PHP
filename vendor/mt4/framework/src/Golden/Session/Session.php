@@ -18,12 +18,6 @@ class Session
 	 */
 	public static function start($app_base_path = null)
 	{
-		if(!is_null($app_base_path))
-		{
-			set_include_path($app_base_path . '/vendor/phpseclib');
-			include_once 'Net/SSH2.php';
-		}
-
 		@session_start();
 	}
 

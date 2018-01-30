@@ -3,19 +3,50 @@
 
 <h4><small>TESTE MT4</small></h4>
 <hr>
-<h2>Cryptography</h2>
-<h5><span class="glyphicon glyphicon-time"></span> Post by Jane Dane, Sep 27, 2015.</h5>
-<p>Texto texto</p>
-<br><br>
+<h2>Criptografia</h2>
+<h5>Framework próprio por Felipe D. v<?php echo \Golden\Foundation\Application::VERSION; ?></h5>
 
-<h4>Texto</h4>
+<p>&nbsp;</p>
 
-<form role="form">
-    <div class="form-group">
-        <textarea class="form-control" rows="3" required></textarea>
+<form id="form" action="<?php echo route('cryptography.store'); ?>" method="post">
+
+    <input type="hidden" name="action" value="encrypt">
+
+    <div class="row">
+        <div class="col-md-8">
+
+            <div class="row">
+                <div class="col-md-6">
+                    <label for="text">Texto*</label>
+                    <input type="text" name="text" id="text" value="" class="form-control" />
+                </div>
+            </div>
+
+            <div class="row">&nbsp;</div>
+
+            <figure class="highlight">
+                    <pre>
+                        <code class="language-html" id="output" data-lang="html" style="float: left; padding-top: 10px;"><?php if(!isset($output)) { ?>Digite um texto acima e clique no botão abaixo...<?php } else { echo $output; } ?></code>
+                    </pre>
+            </figure>
+
+            <div class="row">&nbsp;</div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <button type="button" class="btn btn-success" id="bt-action">Criptografar</button>
+                </div>
+            </div>
+
+        </div>
     </div>
-    <button type="submit" class="btn btn-success">Submit</button>
 </form>
+
+<p>&nbsp;</p>
+
+<span id="status"></span>
+
+<script src="<?php echo asset('assets/app/cryptography.js'); ?>"></script>
 
 <?php $this->end('content'); ?>
 

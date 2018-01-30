@@ -35,9 +35,6 @@ class SshController extends Controller
 	 */
 	public function index()
 	{
-//		if(Session::has('ssh'))
-//			return view('pages.ssh.commands');
-
 		$devices = Device::where(['active' => 1])->get();
 		return view('pages.ssh.index', compact('devices'));
 	}
@@ -113,7 +110,7 @@ class SshController extends Controller
 	/**
 	 * Connect to the shell terminal
 	 *
-	 * @return Response
+	 * @return Response|array
 	 */
 	public function shell()
 	{
@@ -136,21 +133,24 @@ class SshController extends Controller
 				{
 					$output = $ssh->exec( $request->get('command') );
 
-					return [
+					return Response::create([
 						'status' => 'Comando executado com sucesso',
 						'output' => $output,
-					];
+					])->setAjax()->send();
 				}
 
-				return [
+				return Response::create([
 					'status' => 'Conectado com sucesso',
 					'output' => 'Conectado. Aguardando comando...',
-				];
+				])->setAjax()->send();
 			}
 		}
 		catch (\Exception $ex)
 		{
-			return Response::create(['error' => $ex->getMessage(), 500])->setAjax()->send();
+			return Response::create([
+				'error' => $ex->getMessage(),
+				'output' => $ex->getMessage(),
+			], 500)->setAjax()->send();
 		}
 	}
 

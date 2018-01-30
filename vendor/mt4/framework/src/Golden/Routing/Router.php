@@ -376,6 +376,9 @@ class Router
 			return Response::create( $return, 404 )->send();
 		}
 
+		if($return instanceof Response)
+			return $return;
+
 		return Response::create( $return )->send();
 	}
 
