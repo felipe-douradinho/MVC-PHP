@@ -5,20 +5,17 @@
         <div class="col-md-2 col-sm-3 sidenav">
             <h4>Teste MT4</h4>
             <ul class="nav nav-pills nav-stacked">
-                <li class="active">
+                <li <?=\Golden\Http\Request::get('uri') == '/devices' ? 'class="active"' : ''?>>
                     <a href="<?php echo route('devices.index'); ?>">​Controle​ ​de​ ​Dispositivos</a>
                 </li>
-                <li>
+                <li <?=\Golden\Http\Request::get('uri') == '/ssh-integration' ? 'class="active"' : ''?>>
                     <a href="<?php echo route('ssh_integration.index'); ?>">​Integração​ ​SSH</a>
                 </li>
-                <li>
+                <li <?=\Golden\Http\Request::get('uri') == '/cryptography' ? 'class="active"' : ''?>>
                     <a href="<?php echo route('cryptography.index'); ?>">​Criptografia</a>
                 </li>
-                <li>
+                <li <?=\Golden\Http\Request::get('uri') == '/hashes' ? 'class="active"' : ''?>>
                     <a href="<?php echo route('hashes.index'); ?>">​Comparação​ ​de​ ​Hashes</a>
-                </li>
-                <li>
-                    <a href="<?php echo route('reports.index'); ?>">​Relatório</a>
                 </li>
             </ul>
         </div>
