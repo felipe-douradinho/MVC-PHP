@@ -49,8 +49,11 @@ class CryptographyController extends Controller
 		{
 			$request = collect(Request::all())->except(['uri']);
 
-			if(!$request->has('text') || !$request->has('action'))
+			if(!$request->has('text') || strlen(trim($request->get('text'))) <= 0)
 				throw new \Exception('Erro: Por favor, preencha o campo de texto!', 1);
+
+			if(!$request->has('action') || strlen(trim($request->get('action'))) <= 0)
+				throw new \Exception('Erro: Por favor, preencha o campo  action!', 1);
 
 			switch ($request->get('action'))
 			{
@@ -76,7 +79,7 @@ class CryptographyController extends Controller
 					$final = AesSecurity::decrypt( '1b!0n#2h5j4$u8y4%g5b2n3&f1v0b*2g5h(3nr)8', $final );
 					$final = CaesarCipher::decrypt( $final, 3 );
 
-					$details = "Caesar: {$caesar}\nAes256: {$aes}\nCustom: {$custom}\n\nJuntos em sequencia: {$final}";
+					$details = "Caesar: {$caesar}\nAes256: {$aes}\nCustom: {$custom}\n\nResultado: {$final}";
 
 					return Response::create([ 'details' => $details, 'final' => $final, ])->setAjax()->send();
 			}
